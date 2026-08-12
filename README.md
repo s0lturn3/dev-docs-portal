@@ -40,13 +40,15 @@ devdocs-portal/
 │   │   │   ├── categories/
 │   │   │   ├── tags/
 │   │   │   ├── attachments/
-│   │   │   └── auth/             # login, geração/validação de JWT
+│   │   │   ├── auth/             # login, geração/validação de JWT
+|   |   |   └── routes.ts         # arquivo central de rotas dos módulos
 │   │   ├── middlewares/          # auth guard, error handler, upload (multer)
 │   │   ├── types/                # tipos/DTOs compartilhados
-│   │   └── server.ts             # entry point
+│   │   └── index.ts              # entry point do backend
 │   ├── uploads/                  # arquivos anexados às páginas (imagens, PDFs, etc.)
 │   ├── web.config                # configuração do iisnode para deploy no IIS
 │   ├── package.json
+|   ├── server.ts                 # entry point
 │   └── tsconfig.json
 ├── frontend/
 │   ├── src/
