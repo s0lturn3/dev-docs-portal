@@ -1,32 +1,28 @@
 import { Request, Response, Router } from 'express';
+import pagesRepository from '../../db/repositories/page.repository';
 import PageModel from '../../models/page.model';
 
 
 export function getPages(req: Request, res: Response) {
-  const pages: PageModel[] = [
-    { id: 1, category_id: 2, title: 'Introdução', slug: 'introducao', content_md: '', created_by: 1, created_at: new Date() },
-    { id: 2, category_id: 3, title: 'Instalação', slug: 'instalacao', content_md: '', created_by: 1, created_at: new Date() },
-    { id: 3, category_id: 5, title: 'Componentes', slug: 'componentes', content_md: '', created_by: 1, created_at: new Date() },
-    { id: 4, category_id: 1, title: 'Ícones', slug: 'icones', content_md: '', created_by: 1, created_at: new Date() },
-  ];
+  
+  pagesRepository.getList((pages) => {
+    return res.json(pages);
+  });
 
-  return res.json(pages);
 }
 
 export function getPage(req: Request, res: Response) {
   const id = +req.params.id;
 
-  const page: PageModel = {
-    id: id,
-    category_id: 2,
-    title: '',
-    slug: '',
-    content_md: '',
-    created_by: 1,
-    created_at: new Date(),
-  };
+  pagesRepository.get(id, (page) => {
+    if (id) {
+      return res.json(page);
+    }
+    else {
+      return res.status(400).send();
+    }
+  });
 
-  return res.json(page);
 }
 
 export function createPage(req: Request, res: Response) {
