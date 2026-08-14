@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import pagesRepository from '../../db/repositories/page.repository';
+import pagesRepository from '../../db/repositories/pages.repository';
 import PageModel from '../../models/page.model';
 
 
@@ -70,4 +70,4 @@ class PagesController {
 }
 
 
-export default new PagesController().router;  // here we export the controller class router
+export default new PagesController().router;
