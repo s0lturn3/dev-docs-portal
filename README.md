@@ -1,88 +1,88 @@
 # 📘 DevDocs Portal
 
-Portal interno de documentação técnica em Markdown, focado em componentes, padrões de código e tutoriais para os times de desenvolvimento. Pense em algo no espírito do Notion, porém mais simples, estático e sem as complexidades de um editor colaborativo em tempo real.
+Internal technical documentation portal in Markdown, focused on components, code patterns and tutorials for development teams. Think of something in the spirit of Notion, but simpler, static and without the complexities of a real-time collaborative editor.
 
-Projeto interno — uso restrito à rede/infraestrutura da empresa.
+Internal project — restricted use to company network/infrastructure.
 
-## Motivação
+## Motivation
 
-Este projeto substitui uma versão anterior do portal, escrita em Angular com conteúdo em HTML e um componente separado por página. Aquela abordagem não escalou bem conforme a quantidade de documentação cresceu. Esta reescrita move o conteúdo para Markdown puro, simplificando drasticamente a criação e manutenção de páginas, e revisita a stack para reduzir complexidade desnecessária.
+This project replaces a previous version of the portal, written in Angular with HTML content and a separate component per page. That approach did not scale well as the amount of documentation grew. This rewrite moves content to plain Markdown, drastically simplifying page creation and maintenance, and revisits the stack to reduce unnecessary complexity.
 
 ## Stack
 
-| Camada | Tecnologia |
+| Layer | Technology |
 |---|---|
 | Frontend | Angular 19+ |
 | Backend | Node.js + TypeScript + Express |
-| Persistência | SQLite (arquivo único, sem servidor de banco separado) |
-| Autenticação | JWT simples, isolada do SSO corporativo |
-| Hospedagem | IIS (via [iisnode](https://github.com/Azure/iisnode)) |
+| Persistence | SQLite (single file, no separate database server) |
+| Authentication | Simple JWT, isolated from corporate SSO |
+| Hosting | IIS (via [iisnode](https://github.com/Azure/iisnode)) |
 
-### Por que essa stack
+### Why this stack
 
-- **SQLite em vez de PostgreSQL**: o portal tem no máximo 2 editores simultâneos e uma única instância do backend rodando. Não há necessidade de um SGBD cliente-servidor; SQLite resolve com zero infraestrutura adicional (sem container, sem processo de banco separado, backup = copiar um arquivo).
-- **Express em vez de NestJS**: o escopo é um CRUD relativamente simples (páginas, categorias, tags, anexos). A estrutura de módulos/DI do NestJS não se paga para este volume de features.
-- **Leitura aberta, escrita protegida**: a leitura do conteúdo não exige login (o portal já está atrás da rede interna da empresa). Apenas as rotas de escrita (criar/editar/excluir páginas e anexos) exigem autenticação via JWT com role de editor.
+- **SQLite instead of PostgreSQL**: the portal has at most 2 simultaneous editors and a single backend instance running. There is no need for a client-server DBMS; SQLite solves with zero additional infrastructure (no container, no separate database process, backup = copy a file).
+- **Express instead of NestJS**: the scope is a relatively simple CRUD (pages, categories, tags, attachments). NestJS's module/DI structure doesn't pay for this volume of features.
+- **Open reading, protected writing**: content reading doesn't require login (the portal is already behind the company's internal network). Only write routes (create/edit/delete pages and attachments) require authentication via JWT with editor role.
 
-## Estrutura de pastas (proposta)
+## Folder Structure (proposed)
 
 ```
 devdocs-portal/
-├── database.db                  # arquivo SQLite (raiz do projeto)
+├── database.db                  # SQLite file (project root)
 ├── backend/
 │   ├── src/
-│   │   ├── config/               # configuração de ambiente, conexão com SQLite
+│   │   ├── config/               # environment configuration, SQLite connection
 │   │   ├── db/
-│   │   │   ├── migrations/       # scripts de criação/alteração de schema
-│   │   │   └── seed.ts           # script de cadastro manual de editores
-│   │   ├── modules/
-│   │   │   ├── pages/            # controller, service, routes de páginas
+│   │   │   ├── database.ts       # table creation scripts and database initialization
+│   │   │   └── seed.ts           # manual editor registration script
+│   │   ├── modules/              # controllers, services, repositories
+│   │   │   ├── pages/
 │   │   │   ├── categories/
 │   │   │   ├── tags/
 │   │   │   ├── attachments/
-│   │   │   ├── auth/             # login, geração/validação de JWT
-|   |   |   └── routes.ts         # arquivo central de rotas dos módulos
+│   │   │   ├── auth/             # login, JWT generation/validation
+│   │   │   └── routes.ts         # central file for module routes
 │   │   ├── middlewares/          # auth guard, error handler, upload (multer)
-│   │   ├── types/                # tipos/DTOs compartilhados
-│   │   └── index.ts              # entry point do backend
-│   ├── uploads/                  # arquivos anexados às páginas (imagens, PDFs, etc.)
-│   ├── web.config                # configuração do iisnode para deploy no IIS
+│   │   ├── types/                # shared types/DTOs
+│   │   └── index.ts              # backend entry point
+│   ├── uploads/                  # files attached to pages (images, PDFs, etc.)
+│   ├── web.config                # iisnode configuration for IIS deployment
 │   ├── package.json
-|   ├── server.ts                 # entry point
+│   ├── server.ts                 # entry point
 │   └── tsconfig.json
 ├── frontend/
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── core/              # serviços singleton, guards, interceptors
+│   │   │   ├── core/              # singleton services, guards, interceptors
 │   │   │   ├── features/
-│   │   │   │   ├── pages/         # visualização e edição de páginas
-│   │   │   │   ├── navigation/    # árvore de categorias/sidebar
-│   │   │   │   └── auth/          # tela de login (editores)
-│   │   │   └── shared/            # componentes/pipes reutilizáveis (ex: markdown renderer)
+│   │   │   │   ├── pages/         # page viewing and editing
+│   │   │   │   ├── navigation/    # category tree/sidebar
+│   │   │   │   └── auth/          # editor login screen
+│   │   │   └── shared/            # reusable components/pipes (ex: markdown renderer)
 │   │   └── environments/
 │   ├── angular.json
 │   └── package.json
 └── README.md
 ```
 
-> Nota: o arquivo `database.db` fica versionado fora do Git (adicionar ao `.gitignore`), mantendo apenas as migrations versionadas. O banco em si é gerado/populado localmente a partir das migrations + seed.
+> Note: the `database.db` file stays versioned outside Git (add to `.gitignore`), keeping only the migrations versioned. The database itself is generated/populated locally from migrations + seed.
 
-## Modelo de dados (resumo)
+## Data Model (summary)
 
-- **users** — apenas editores se cadastram (cadastro manual, sem self-signup). Leitores não autenticados têm acesso de leitura.
-- **categories** — suporta hierarquia via `parent_id`, usada para montar a navegação em árvore.
-- **pages** — conteúdo em Markdown (`content_md`), vinculado a uma categoria, com slug único para URLs amigáveis.
-- **tags** / **page_tags** — categorização cruzada, independente da árvore de categorias.
-- **attachments** — arquivos referenciados dentro das páginas (imagens, PDFs, zips, etc.), com nome de exibição separado do nome físico em disco para evitar colisões.
+- **users** — only editors register (manual registration, no self-signup). Unauthenticated readers have read access.
+- **categories** — supports hierarchy via `parent_id`, used to build tree navigation.
+- **pages** — content in Markdown (`content_md`), linked to a category, with unique slug for friendly URLs.
+- **tags** / **page_tags** — cross-categorization, independent of category tree.
+- **attachments** — files referenced within pages (images, PDFs, zips, etc.), with display name separate from physical filename to avoid collisions.
 
-## Rodando localmente
+## Running locally
 
 ```bash
 # Backend
 cd backend
 npm install
-npm run migrate      # cria o schema no database.db
-npm run seed         # cadastra o(s) editor(es) inicial(is)
+npm run migrate      # creates schema in database.db
+npm run seed         # registers initial editor(s)
 npm run dev
 
 # Frontend
@@ -94,31 +94,31 @@ ng serve
 ## Roadmap
 
 ### V1 — MVP
-- [ ] CRUD de páginas em Markdown (criar, editar, excluir, listar)
-- [ ] Navegação em árvore por categorias
-- [ ] Renderização de Markdown no frontend (com suporte a syntax highlighting para blocos de código)
-- [ ] Upload de anexos (imagens e arquivos) vinculados a páginas
-- [ ] Autenticação de editores via JWT
-- [ ] Deploy funcional no IIS via iisnode
+- [X] CRUD for pages in Markdown (create, edit, delete, list)
+- [ ] Tree navigation by categories
+- [ ] Markdown rendering on frontend (with syntax highlighting support for code blocks)
+- [ ] File upload (images and files) linked to pages
+- [ ] Editor authentication via JWT
+- [ ] Functional deployment on IIS via iisnode
 
-### V2 — Melhorias de uso
-- [ ] Busca full-text no conteúdo das páginas (SQLite FTS5)
-- [ ] Sistema de tags com filtro na navegação
-- [ ] Editor Markdown com preview lado a lado (ex: baseado em CodeMirror/Monaco)
-- [ ] Breadcrumbs e link "página relacionada"
-- [ ] Página 404 / busca de conteúdo movido/renomeado (slug antigo → novo)
+### V2 — Use Improvements
+- [ ] Full-text search in page content (SQLite FTS5)
+- [ ] Tag system with filtering in navigation
+- [ ] Markdown editor with side-by-side preview (e.g. based on CodeMirror/Monaco)
+- [ ] Breadcrumbs and "related page" link
+- [ ] 404 page / search for moved/renamed content (old slug → new)
 
-### V3 — Possíveis evoluções futuras
-- [ ] Histórico de revisões por página (`page_revisions`, snapshot a cada update)
-- [ ] Exportação de página/seção para PDF
-- [ ] Modo "somente leitura offline" (export estático do portal inteiro)
-- [ ] Métricas simples de acesso (páginas mais visitadas, sem tracking pessoal)
-- [ ] Suporte a múltiplos editores com permissões por categoria (hoje é all-or-nothing)
+### V3 — Possible Future Evolutions
+- [ ] Page revision history (`page_revisions`, snapshot on each update)
+- [ ] Export page/section to PDF
+- [ ] "Read-only offline" mode (static export of entire portal)
+- [ ] Simple access metrics (most visited pages, no personal tracking)
+- [ ] Support for multiple editors with category-based permissions (currently all-or-nothing)
 
-> Itens do V3 não são compromissos — são ideias registradas para avaliação futura, condicionadas a necessidade real de uso do portal.
+> V3 items are not commitments — they are ideas registered for future evaluation, conditional on actual need to use the portal.
 
-## Decisões conscientemente fora de escopo
+## Decisions deliberately out of scope
 
-- **Sem múltiplas instâncias do backend**: SQLite não é adequado para escrita concorrente entre processos separados. Se isso mudar no futuro, é necessário revisitar a escolha de banco (provável migração para PostgreSQL).
-- **Sem versionamento via Git do conteúdo**: o conteúdo markdown vive no banco, não em arquivos versionados. Histórico de mudanças, se necessário, será resolvido via `page_revisions` (ver roadmap V3), não via Git.
-- **Sem integração com o SSO corporativo**: autenticação isolada e cadastro manual, por ser um volume muito baixo de editores (no máximo 2).
+- **No multiple backend instances**: SQLite is not suitable for concurrent writes between separate processes. If this changes in the future, it will be necessary to revisit the database choice (likely migration to PostgreSQL).
+- **No Git versioning of content**: markdown content lives in the database, not in versioned files. Change history, if needed, will be solved via `page_revisions` (see V3 roadmap), not via Git.
+- **No corporate SSO integration**: isolated authentication and manual registration, as there is a very low volume of editors (at most 2).

@@ -1,9 +1,9 @@
-## Schema para o banco de dados (SQLite)
+## Database Schema (SQLite)
 
-Tabelas iniciais:
+Initial tables:
 
 ```sql
--- Usuários (só editores se cadastram; leitores são anônimos)
+-- Users (only editors register; readers are anonymous)
 CREATE TABLE users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT NOT NULL UNIQUE,
@@ -12,29 +12,29 @@ CREATE TABLE users (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- Categorias/seções de navegação (ex: "Frontend", "Padrões de Código", "Componentes")
+-- Categories/navigation sections (e.g: "Frontend", "Code Patterns", "Components")
 CREATE TABLE categories (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
-  parent_id INTEGER REFERENCES categories(id) ON DELETE CASCADE, -- permite sub-categorias
+  parent_id INTEGER REFERENCES categories(id) ON DELETE CASCADE, -- allows sub-categories
   sort_order INTEGER NOT NULL DEFAULT 0
 );
 
--- Páginas de conteúdo
+-- Content pages
 CREATE TABLE pages (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
   title TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
-  content_md TEXT NOT NULL,          -- o markdown em si
+  content_md TEXT NOT NULL,          -- the markdown itself
   created_by INTEGER REFERENCES users(id),
   updated_by INTEGER REFERENCES users(id),
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- Tags (opcional, mas útil pra busca/filtro cross-categoria)
+-- Tags (optional, but useful for cross-category search/filter)
 CREATE TABLE tags (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL UNIQUE
@@ -47,32 +47,32 @@ CREATE TABLE page_tags (
 );
 ```
 
-Decisões para validar:
+Design decisions to validate:
 
-- **`slug` em vez de expor `id` na URL** — melhor pra links compartilháveis internamente (`/docs/padroes-de-commit` em vez de `/docs/47`), e facilita SEO interno/busca.
-- **`parent_id` em categories** — permite navegação em árvore (ex: "Frontend > Angular > Componentes") sem precisar remodelar depois. Se achar overkill agora, pode simplificar pra categoria plana (sem `parent_id`) e adicionar depois — SQLite migra fácil com poucos dados.
-- **Sem tabela de "versões/histórico"** — coerente com sua decisão de não fazer git-based. Se depois sentir falta de "quem mudou o quê e quando", dá pra adicionar uma `page_revisions` guardando snapshots a cada update, mas eu não implementaria isso de início — é complexidade que você disse não precisar.
-- **`content_md` como TEXT direto na tabela** — sem separar em arquivo. Como é SQLite local e o volume de conteúdo é doc técnica (não vídeo/imagem pesada), isso é perfeitamente adequado; não tem necessidade de sistema de arquivo separado pra isso.
+- **`slug` instead of exposing `id` in URL** — better for internally shareable links (`/docs/commit-patterns` instead of `/docs/47`), and facilitates internal SEO/search.
+- **`parent_id` in categories** — enables tree navigation (e.g: "Frontend > Angular > Components") without needing to remodel later. If it feels like overkill now, you can simplify to flat categories (without `parent_id`) and add later — SQLite migrates easily with little data.
+- **No "version/history" table** — consistent with your decision not to do git-based. If you later miss "who changed what and when", you can add a `page_revisions` table storing snapshots on each update, but I wouldn't implement it initially — it's complexity you said you don't need.
+- **`content_md` as TEXT directly in table** — without separating into a file. Since it's local SQLite and the content volume is technical docs (not heavy video/images), this is perfectly adequate; no need for a separate file system for this.
 
 ---
 
-Modelo da tabela de anexos (attachments):
+Attachments table model:
 
 ```sql
 CREATE TABLE attachments (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   page_id INTEGER NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
-  file_name TEXT NOT NULL,        -- nome original enviado pelo usuário (ex: "diagrama-auth.png")
-  stored_name TEXT NOT NULL UNIQUE, -- nome real em disco (ex: "a1b2c3d4.png") - evita colisão/overwrite
-  mime_type TEXT NOT NULL,        -- ex: "image/png", "application/pdf", "application/zip"
+  file_name TEXT NOT NULL,        -- original filename submitted by user (e.g: "diagram-auth.png")
+  stored_name TEXT NOT NULL UNIQUE, -- actual filename on disk (e.g: "a1b2c3d4.png") - avoids collision/overwrite
+  mime_type TEXT NOT NULL,        -- e.g: "image/png", "application/pdf", "application/zip"
   size_bytes INTEGER NOT NULL,
   uploaded_by INTEGER REFERENCES users(id),
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 ```
 
-Decisões para validar:
+Design decisions to validate:
 
-- **`stored_name` separado de `file_name`** — isso é importante, não é só estética. Se dois editores fizerem upload de arquivos chamados `diagrama.png` em páginas diferentes (ou até na mesma), sem esse campo você tem overwrite silencioso no disco. Gere o `stored_name` com um UUID/hash + extensão original (ex: `crypto.randomUUID() + path.extname(originalName)`), guarde o nome "bonito" só em `file_name` pra exibir na UI.
-- **`ON DELETE CASCADE` em `page_id`** — isso limpa a linha do banco quando a página é deletada, mas não apaga o arquivo físico do disco. Isso é uma armadilha comum: o registro some do DB, o arquivo fica órfão em `uploads/`. Você vai precisar, no código do backend (não no SQL), fazer o delete do arquivo físico antes de deletar a página — ex: buscar todos os `attachments` daquela página, `fs.unlink` de cada um, e só depois deletar a página (o cascade cuida do resto das linhas). Isso é lógica de aplicação, o SQL sozinho não resolve.
-- **Path relativo em disco** — sugiro estruturar por página pra facilitar organização e eventual limpeza manual: `uploads/{page_id}/{stored_name}`. Assim se precisar auditar/limpar manualmente algum dia, é óbvio o que pertence a quê.
+- **`stored_name` separate from `file_name`** — this is important, not just aesthetic. If two editors upload files named `diagram.png` on different pages (or even on the same one), without this field you have silent overwrite on disk. Generate `stored_name` with a UUID/hash + original extension (e.g: `crypto.randomUUID() + path.extname(originalName)`), keep the "nice" name only in `file_name` for UI display.
+- **`ON DELETE CASCADE` on `page_id`** — this cleans the database row when a page is deleted, but doesn't delete the physical file from disk. This is a common trap: the record disappears from the DB, the file becomes orphaned in `uploads/`. You'll need, in your backend code (not in SQL), to delete the physical file before deleting the page — e.g: get all `attachments` for that page, `fs.unlink` each one, and only then delete the page (the cascade handles the rest of the rows). This is application logic, SQL alone doesn't solve it.
+- **Relative path on disk** — I suggest organizing by page to facilitate organization and eventual manual cleanup: `uploads/{page_id}/{stored_name}`. That way if you need to audit/clean up manually someday, it's obvious what belongs to what.

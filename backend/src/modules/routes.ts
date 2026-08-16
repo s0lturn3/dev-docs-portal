@@ -55,9 +55,9 @@ export default class Routes {
     app.use('/api/tags', tagsController);
     app.use('/api/attachments', attachmentsController);
 
-    // Rota padrão para lidar com solicitações não correspondentes
+    // Default route to handle non-matching requests
     app.use((req, res) => {
-      res.status(404).json({ message: 'Rota não encontrada' });
+      res.status(404).json({ message: 'Route not found' });
     })
   }
 }

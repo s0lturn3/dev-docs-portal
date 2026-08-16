@@ -3,7 +3,7 @@ import UserModel from '../../models/user.model';
 import usersRepository from './users.repository';
 
 
-// Endregions
+// End Regions
 
 /**
  * @swagger
