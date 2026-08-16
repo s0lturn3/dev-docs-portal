@@ -97,6 +97,19 @@ const pagesRepository = {
       callback(this?.changes)
     })
   },
+
+  listByTag: (tagID: number, callback: (pages: PageModel[]) => void) => {
+    const sql = `
+      SELECT      pages.*
+      FROM        pages
+      INNER JOIN  page_tags ON pages.id = page_tags.page_id
+      WHERE       page_tags.tag_id = ?
+    `;
+
+    const params = [ tagID ];
+
+    database.all<PageModel>(sql, params, (_err, rows) => callback(rows));
+  },
 };
 
 export default pagesRepository;

@@ -109,6 +109,67 @@ export function getPage(req: Request, res: Response) {
 
 /**
  * @swagger
+ * /api/pages/tag/{tagId}:
+ *   get:
+ *     tags:
+ *       - Pages
+ *     summary: Retrieves all pages associated with a specific tag
+ *     parameters:
+ *       - in: path
+ *         name: tagId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the tag
+ *     responses:
+ *       200:
+ *         description: A list of pages associated with the tag
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   category_id:
+ *                     type: integer
+ *                     example: 1
+ *                   title:
+ *                     type: string
+ *                     example: Getting Started
+ *                   slug:
+ *                     type: string
+ *                     example: getting-started
+ *                   content_md:
+ *                     type: string
+ *                     example: "# Welcome to the docs"
+ *                   created_by:
+ *                     type: integer
+ *                     example: 1
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *       400:
+ *         description: Invalid tag ID
+ *       404:
+ *         description: No pages found for this tag
+ */
+export function getPagesByTag(req: Request, res: Response) {
+  const tagId = +req.params.tagId;
+
+  if (!tagId) return res.status(400).send();
+
+  pagesRepository.listByTag(tagId, (pages) => {
+    if (!pages || pages.length === 0) return res.status(404).send();
+    return res.json(pages);
+  });
+}
+
+/**
+ * @swagger
  * /api/pages:
  *   post:
  *     tags:
@@ -268,6 +329,7 @@ class PagesController {
 
   initializeRoutes() {
     this.router.get('/', getPages);
+    this.router.get('/tag/:tagId', getPagesByTag);
     this.router.get('/:id', getPage);
 
     this.router.post('/', createPage);

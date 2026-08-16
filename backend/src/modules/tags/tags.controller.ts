@@ -79,6 +79,52 @@ export function getTag(req: Request, res: Response) {
 
 /**
  * @swagger
+ * /api/tags/page/{pageId}:
+ *   get:
+ *     tags:
+ *       - Tags
+ *     summary: Retrieves all tags associated with a specific page
+ *     parameters:
+ *       - in: path
+ *         name: pageId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the page
+ *     responses:
+ *       200:
+ *         description: A list of tags associated with the page
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: angular
+ *       400:
+ *         description: Invalid page ID
+ *       404:
+ *         description: No tags found for this page
+ */
+export function getTagsByPage(req: Request, res: Response) {
+  const pageId = +req.params.pageId;
+
+  if (!pageId) return res.status(400).send();
+
+  tagsRepository.listByPage(pageId, (tags) => {
+    if (!tags || tags.length === 0) return res.status(404).send();
+    return res.json(tags);
+  });
+}
+
+/**
+ * @swagger
  * /api/tags:
  *   post:
  *     tags:
@@ -207,6 +253,7 @@ class TagsController {
 
   initializeRoutes() {
     this.router.get('/', getTags);
+    this.router.get('/page/:pageId', getTagsByPage);
     this.router.get('/:id', getTag);
 
     this.router.post('/', createTag);
