@@ -4,12 +4,86 @@ import CategoryModel from "../../models/category.model";
 
 
 // ENDPOINTS
+/**
+ * @swagger
+ * /api/categories:
+ *   get:
+ *     tags:
+ *       - Categories
+ *     summary: Retrieves a list of categories
+ *     responses:
+ *       200:
+ *         description: A list of categories
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: Backend
+ *                   slug:
+ *                     type: string
+ *                     example: backend
+ *                   parent_id:
+ *                     type: integer
+ *                     example: 0
+ *                   sort_order:
+ *                     type: integer
+ *                     example: 1
+ */
 export function getCategories(req: Request, res: Response) {
   categoriesRepository.list((categories) => {
     return res.json(categories);
   });
 }
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   get:
+ *     tags:
+ *       - Categories
+ *     summary: Retrieves a specific category by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: A category object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: Backend
+ *                 slug:
+ *                   type: string
+ *                   example: backend
+ *                 parent_id:
+ *                   type: integer
+ *                   example: 0
+ *                 sort_order:
+ *                   type: integer
+ *                   example: 1
+ *       400:
+ *         description: Invalid category ID
+ *       404:
+ *         description: Category not found
+ */
 export function getCategory(req: Request, res: Response) {
   const id = +req.params.id;
 
@@ -21,6 +95,45 @@ export function getCategory(req: Request, res: Response) {
   });
 }
 
+/**
+ * @swagger
+ * /api/categories:
+ *   post:
+ *     tags:
+ *       - Categories
+ *     summary: Creates a new category
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - slug
+ *               - parent_id
+ *               - sort_order
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Frontend
+ *               slug:
+ *                 type: string
+ *                 example: frontend
+ *               parent_id:
+ *                 type: integer
+ *                 example: 0
+ *               sort_order:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       201:
+ *         description: Category created successfully
+ *       400:
+ *         description: Invalid request body
+ *       500:
+ *         description: Internal server error
+ */
 export function createCategory(req: Request, res: Response) {
   const category: CategoryModel = req.body;
 
@@ -33,6 +146,51 @@ export function createCategory(req: Request, res: Response) {
   });
 }
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   put:
+ *     tags:
+ *       - Categories
+ *     summary: Updates an existing category
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - slug
+ *               - parent_id
+ *               - sort_order
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Frontend Development
+ *               slug:
+ *                 type: string
+ *                 example: frontend-dev
+ *               parent_id:
+ *                 type: integer
+ *                 example: 0
+ *               sort_order:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       204:
+ *         description: Category updated successfully
+ *       400:
+ *         description: Invalid request
+ *       500:
+ *         description: Internal server error
+ */
 export function updateCategory(req: Request, res: Response) {
   const id = +req.params.id;
   const category: CategoryModel = req.body;
@@ -47,6 +205,27 @@ export function updateCategory(req: Request, res: Response) {
   });
 }
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   delete:
+ *     tags:
+ *       - Categories
+ *     summary: Deletes a category
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Category deleted successfully
+ *       400:
+ *         description: Invalid category ID
+ *       500:
+ *         description: Internal server error
+ */
 export function deleteCategory(req: Request, res: Response) {
   const id = +req.params.id;
 

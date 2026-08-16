@@ -3,12 +3,99 @@ import pagesRepository from '../../db/repositories/pages.repository';
 import PageModel from '../../models/page.model';
 
 
+/**
+ * @swagger
+ * /api/pages:
+ *   get:
+ *     tags:
+ *       - Pages
+ *     summary: Retrieves a list of pages
+ *     responses:
+ *       200:
+ *         description: A list of pages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   category_id:
+ *                     type: integer
+ *                     example: 1
+ *                   title:
+ *                     type: string
+ *                     example: Getting Started
+ *                   slug:
+ *                     type: string
+ *                     example: getting-started
+ *                   content_md:
+ *                     type: string
+ *                     example: "# Welcome to the docs"
+ *                   created_by:
+ *                     type: integer
+ *                     example: 1
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2026-01-15T10:30:00Z"
+ */
 export function getPages(req: Request, res: Response) {
   pagesRepository.list((pages) => {
     return res.json(pages);
   });
 }
 
+/**
+ * @swagger
+ * /api/pages/{id}:
+ *   get:
+ *     tags:
+ *       - Pages
+ *     summary: Retrieves a specific page by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: A page object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 category_id:
+ *                   type: integer
+ *                   example: 1
+ *                 title:
+ *                   type: string
+ *                   example: Getting Started
+ *                 slug:
+ *                   type: string
+ *                   example: getting-started
+ *                 content_md:
+ *                   type: string
+ *                   example: "# Welcome to the docs"
+ *                 created_by:
+ *                   type: integer
+ *                   example: 1
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Invalid page ID
+ *       404:
+ *         description: Page not found
+ */
 export function getPage(req: Request, res: Response) {
   const id = +req.params.id;
 
@@ -20,6 +107,49 @@ export function getPage(req: Request, res: Response) {
   });
 }
 
+/**
+ * @swagger
+ * /api/pages:
+ *   post:
+ *     tags:
+ *       - Pages
+ *     summary: Creates a new page
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - category_id
+ *               - title
+ *               - slug
+ *               - content_md
+ *               - created_by
+ *             properties:
+ *               category_id:
+ *                 type: integer
+ *                 example: 1
+ *               title:
+ *                 type: string
+ *                 example: Getting Started
+ *               slug:
+ *                 type: string
+ *                 example: getting-started
+ *               content_md:
+ *                 type: string
+ *                 example: "# Welcome to the docs"
+ *               created_by:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       201:
+ *         description: Page created successfully
+ *       400:
+ *         description: Invalid request body
+ *       500:
+ *         description: Internal server error
+ */
 export function createPage(req: Request, res: Response) {
   const page: PageModel = req.body;
 
@@ -32,6 +162,55 @@ export function createPage(req: Request, res: Response) {
   });
 }
 
+/**
+ * @swagger
+ * /api/pages/{id}:
+ *   put:
+ *     tags:
+ *       - Pages
+ *     summary: Updates an existing page
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - category_id
+ *               - title
+ *               - slug
+ *               - content_md
+ *               - updated_by
+ *             properties:
+ *               category_id:
+ *                 type: integer
+ *                 example: 1
+ *               title:
+ *                 type: string
+ *                 example: Getting Started Guide
+ *               slug:
+ *                 type: string
+ *                 example: getting-started
+ *               content_md:
+ *                 type: string
+ *                 example: "# Updated content"
+ *               updated_by:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       204:
+ *         description: Page updated successfully
+ *       400:
+ *         description: Invalid request
+ *       500:
+ *         description: Internal server error
+ */
 export function updatePage(req: Request, res: Response) {
   const id: number = +req.params.id;
   const page: PageModel = req.body;
@@ -46,6 +225,27 @@ export function updatePage(req: Request, res: Response) {
   });
 }
 
+/**
+ * @swagger
+ * /api/pages/{id}:
+ *   delete:
+ *     tags:
+ *       - Pages
+ *     summary: Deletes a page
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Page deleted successfully
+ *       400:
+ *         description: Invalid page ID
+ *       500:
+ *         description: Internal server error
+ */
 export function deletePage(req: Request, res: Response) {
   const id: number = +req.params.id;
 
@@ -55,7 +255,6 @@ export function deletePage(req: Request, res: Response) {
     if (!changes || changes == 0) return res.status(500).send();
 
     return res.status(204).send();
-    // return res.status(204).send("Registro excluído com sucesso.");
   });
 }
 
