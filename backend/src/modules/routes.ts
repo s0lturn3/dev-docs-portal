@@ -1,10 +1,10 @@
 import { Application } from "express";
 
 import attachmentsController from "./attachments/attachments.controller";
-import usersController from "./auth/users.controller";
 import categoriesController from "./categories/categories.controller";
 import pagesController from "./pages/pages.controller";
 import tagsController from "./tags/tags.controller";
+import usersController from "./users/users.controller";
 
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';

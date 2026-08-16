@@ -1,5 +1,5 @@
+import database from "../../db/database";
 import AttachmentModel from "../../models/attachment.model";
-import database from "../database";
 
 const attachmentsRepository = {
   get: (id: number, callback: (record: AttachmentModel) => void) => {

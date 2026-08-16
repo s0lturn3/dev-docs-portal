@@ -1,4 +1,4 @@
-## Schema sugerido para o banco de dados (SQLite)
+## Schema para o banco de dados (SQLite)
 
 Tabelas iniciais:
 

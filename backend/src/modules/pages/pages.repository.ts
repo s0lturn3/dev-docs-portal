@@ -1,5 +1,5 @@
+import database from "../../db/database";
 import PageModel from "../../models/page.model";
-import database from "../database";
 
 const pagesRepository = {
   get: (id: number, callback: (record?: PageModel) => void) => {

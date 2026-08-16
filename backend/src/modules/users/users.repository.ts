@@ -1,5 +1,5 @@
+import database from "../../db/database";
 import UserModel from "../../models/user.model";
-import database from "../database";
 
 const usersRepository = {
   get: (id: number, callback: (user: UserModel) => void) => {

@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import tagsRepository from "../../db/repositories/tags.repository";
 import TagModel from "../../models/tag.model";
+import tagsRepository from "./tags.repository";
 
 
 // ENDPOINTS

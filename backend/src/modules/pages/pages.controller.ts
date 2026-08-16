@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import pagesRepository from '../../db/repositories/pages.repository';
 import PageModel from '../../models/page.model';
+import pagesRepository from './pages.repository';
 
 
 /**

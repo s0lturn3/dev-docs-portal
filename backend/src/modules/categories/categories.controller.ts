@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import categoriesRepository from "../../db/repositories/categories.repository";
 import CategoryModel from "../../models/category.model";
+import categoriesRepository from "./categories.repository";
 
 
 // ENDPOINTS

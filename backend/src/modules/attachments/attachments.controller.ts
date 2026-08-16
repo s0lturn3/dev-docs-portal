@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import attachmentsRepository from "../../db/repositories/attachments.repository";
 import AttachmentModel from "../../models/attachment.model";
+import attachmentsRepository from "./attachments.repository";
 
 
 // ENDPOINTS

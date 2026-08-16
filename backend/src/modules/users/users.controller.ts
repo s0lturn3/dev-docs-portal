@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import usersRepository from '../../db/repositories/users.repository';
 import UserModel from '../../models/user.model';
+import usersRepository from './users.repository';
 
 
 // Endregions

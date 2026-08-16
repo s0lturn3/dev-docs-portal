@@ -1,5 +1,5 @@
+import database from "../../db/database";
 import CategoryModel from "../../models/category.model";
-import database from "../database";
 
 const categoriesRepository = {
   get: (id: number, callback: (category: CategoryModel) => void) => {

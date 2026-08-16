@@ -1,5 +1,5 @@
+import database from "../../db/database";
 import TagModel from "../../models/tag.model";
-import database from "../database";
 
 const tagsRepository = {
   get: (id: number, callback: (record: TagModel) => void) => {
