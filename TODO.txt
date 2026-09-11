@@ -1,0 +1,6 @@
+- Criar tabela específica para componentes customizados da lib (primariamente usada nos MCPs, mas pode ser mostrada no portal);
+- Na tabela de pages criar uma FK para a de components - `1-n`;
+- Avaliar adicionar flag `isBootstrap` na tabela de componentes para informar MCPs que aquele componente/página deve ser usado com base no padrão Bootstrap puro, ao invés de ser um componente infra;
+- Tabela de componentes ter campo para armazenar JSON MCP;
+
+- *Validar relacionamento entre pages e components mais eficiente para documentação isolada + MCP - `n-n` ou `1-n`;
