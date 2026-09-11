@@ -1,0 +1,27 @@
+<nav id="header" class="bg-primary text-light p-3 d-flex align-items-center justify-content-center">
+
+  <div class="w-75 d-flex align-items-center justify-content-between">
+    <div class="logo d-flex align-items-end">
+      <!-- <a href="#"> <img src="" height="36px" alt="base logo"> </a> -->
+
+      <h1 id="title" class="fs-4"> devdocs portal|</h1>
+      <span class="version">{{ version }}</span>
+    </div>
+
+    <div class="icons d-flex align-items-center gap-3">
+      <a type="button" (click)="toggleTheme()" [tooltip]="_theme.getToggleLabel()" >
+        <i [ngClass]="{
+          'bi bi-sun': isDark(),
+          'bi bi-moon': !isDark()
+        }" ></i>
+      </a>
+  
+      <a type="button" tooltip="Login" >
+        <i class="bi bi-person"></i>
+      </a>
+    </div>
+  </div>
+
+</nav>
+
+<router-outlet />

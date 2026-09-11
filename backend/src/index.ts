@@ -11,7 +11,8 @@ export default class Server {
   // Configures middleware for the Express application
   private config(app: Application): void {
     const corsOptions: CorsOptions = {
-      origin: "http://localhost:4200" // Angular default URL
+      origin: [ "http://localhost:4200" ],
+      credentials: true
     };
 
     app.use(cors(corsOptions));

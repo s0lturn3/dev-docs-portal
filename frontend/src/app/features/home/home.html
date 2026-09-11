@@ -1,0 +1,26 @@
+<div class="banner bg-primary text-light p-5">
+  <div class="w-50 d-flex flex-column align-items-start justify-content-start gap-5">
+    <div class="banner-title">
+      <h1 class="fw-bold">Documentação técnica interna</h1>
+      <span>Componentes, padrões de código e tutoriais dos times de desenvolvimento.</span>
+    </div>
+
+    <div class="input-group">
+      <span class="input-group-text" id="search-input-addon"> <i class="bi bi-search"></i> </span>
+      <input type="text" class="form-control" placeholder="Buscar páginas, tags, categorias..." aria-label="pages" aria-describedby="page-search">
+    </div>
+  </div>
+</div>
+
+
+<div class="border rounded">
+  <p>PÁGINAS</p>
+  
+  @defer (when pages) {
+    <ul>
+      @for (page of pages; track page.id) {
+        <li><b>Título:</b> <a [routerLink]="[ '/pages', page.id ]">{{ page.title }}</a></li>
+      }
+    </ul>
+  }
+</div>

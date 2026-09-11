@@ -12,7 +12,7 @@ This project replaces a previous version of the portal, written in Angular with 
 
 | Layer | Technology |
 |---|---|
-| Frontend | Angular 19+ |
+| Frontend | Angular 20+ |
 | Backend | Node.js + TypeScript + Express |
 | Persistence | SQLite (single file, no separate database server) |
 | Authentication | Simple JWT, isolated from corporate SSO |
