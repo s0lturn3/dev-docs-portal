@@ -7,16 +7,78 @@
 @import "../node_modules/ngx-toastr/toastr.css";
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons";
 
-/* GLOBAL */
 
 /* BOOTSTRAP OVERRIDE */
-$theme-colors: (
-  "primary": #213b70,
-  "secondary": #6C757D,
-  "success": #0F5132,
-  "danger": #B23737,
-  "warning": #FFC107,
-	"light": #FFF
-);
+// $theme-colors: (
+//   "primary": #213b70,
+//   "secondary": #6C757D,
+//   "success": #0F5132,
+//   "danger": #B23737,
+//   "warning": #FFC107,
+// 	"light": #FFF
+// );
 
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+
+/* GLOBAL */
+:root {
+  --base: #F5F6F8;
+  --text: #212121;
+
+  --primary: #213b70;
+  --secondary: #6C757D;
+  --success: #0F5132;
+  --danger: #B23737;
+  --warning: #FFC107;
+
+  --bs-body-bg: var(--base);
+  --bs-body-color: var(--text);
+  --bs-body-bg-rgb: 245, 246, 248;
+  --bs-body-color-rgb: 33, 33, 33;
+
+  --bs-primary: #213b70;
+  --bs-primary-rgb: 33, 59, 112;
+  --bs-secondary: #6C757D;
+  --bs-secondary-rgb: 108, 117, 125;
+  --bs-success: #0F5132;
+  --bs-success-rgb: 15, 81, 50;
+  --bs-danger: #B23737;
+  --bs-danger-rgb: 178, 55, 55;
+  --bs-warning: #FFC107;
+  --bs-warning-rgb: 255, 193, 7;
+
+  &.dark {
+    --base: #212529;
+    --text: #F8F9FA;
+
+    --primary: #6586C0;
+    --secondary: #2B3035;
+    --success: #0F5132;
+    --danger: #B23737;
+    --warning: #FFC107;
+
+    --bs-body-bg: var(--base);
+    --bs-body-color: var(--text);
+    --bs-body-bg-rgb: 33, 37, 41;
+    --bs-body-color-rgb: 248, 249, 250;
+
+    --bs-primary: #6586C0;
+    --bs-primary-rgb: 101, 134, 192;
+    --bs-secondary: #2B3035;
+    --bs-secondary-rgb: 43, 48, 53;
+    --bs-success: #0F5132;
+    --bs-success-rgb: 15, 81, 50;
+    --bs-danger: #B23737;
+    --bs-danger-rgb: 178, 55, 55;
+    --bs-warning: #FFC107;
+    --bs-warning-rgb: 255, 193, 7;
+  }
+}
+
+html, body, app-root {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+
+  transition: all .3s ease-in;
+}

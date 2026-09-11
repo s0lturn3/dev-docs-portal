@@ -1,0 +1,7 @@
+<!-- <h1>{{ page?.title ?? 'AAAAA' }}</h1> -->
+
+@defer (when page) {
+  <div class="p-3">
+    <markdown [data]="page?.content_md" />
+  </div>
+}

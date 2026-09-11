@@ -1,7 +1,8 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
+import { provideMarkdown } from 'ngx-markdown';
 import { provideToastr } from 'ngx-toastr';
 
 import { routes } from './app.routes';
@@ -17,5 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideToastr({
       positionClass: 'toast-bottom-right',
     }),
+
+    provideMarkdown({ loader: HttpClient })
   ]
 };

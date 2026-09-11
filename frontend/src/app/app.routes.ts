@@ -15,6 +15,11 @@ export const routes: Routes = [
       { path: 'inicio', component: Home, title: 'Início' },
 
       {
+        path: 'pages',
+        loadChildren: () => import('./features/pages/pages.routes').then(r => r.PAGES_ROUTES)
+      },
+
+      {
         path: '',
         pathMatch: 'full',
         redirectTo: 'inicio'

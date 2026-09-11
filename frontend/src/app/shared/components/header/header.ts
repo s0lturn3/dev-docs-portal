@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { RouterOutlet } from "@angular/router";
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import packageJson from '../../../../../package.json';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -9,8 +10,9 @@ import { ThemeService } from '../../../core/services/theme.service';
   templateUrl: './header.html',
   imports: [
     TooltipModule,
-    NgClass
-],
+    NgClass,
+    RouterOutlet
+  ],
   styles: `
     #header {
       height: 64px;
